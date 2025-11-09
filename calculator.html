@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backlog Trophy Challenge</title>
+<style>
+    body { font-family: Arial, Helvetica, sans-serif; text-align:center; }
+    table { margin: 0 auto; border-collapse: collapse; }
+    td, th { border: 1px solid black; padding: 6px 10px; }
+    #results { display: none; margin-top: 20px; }
+    #message { color: red; font-weight: bold; margin-top: 10px; }
+</style>
+</head>
+<body>
+<img src="calculator-Dateien/header.png" alt="Header" style="width:50%; display:block; margin:auto;">
+<h1>🎮 ABC-Challenge</h1>
+<p style="font-size:1.2em; font-style:italic; margin-top:-10px;">Autumn Backlog Challenge</p>
+<p><b>Zeitraum:</b> 01.11.2025 (00:00 Uhr MEZ) – 30.11.2025 (23:59 Uhr MEZ)</p>
+
+<div style="color:orangered;">Counter: <span id="counter">Event beendet!</span></div>
+
+<h2>Eingabe</h2>
+
+<form id="trophyForm" onsubmit="return false;">
+    <label>Bronze-Trophäen:</label><br>
+    <input type="number" id="bronze" min="0" style="text-align:center;"><br><br>
+
+    <label>Silber-Trophäen:</label><br>
+    <input type="number" id="silver" min="0" style="text-align:center;"><br><br>
+
+    <label>Gold-Trophäen:</label><br>
+    <input type="number" id="gold" min="0" style="text-align:center;"><br><br>
+
+    <label>Platin-Trophäen:</label><br>
+    <input type="number" id="platinum" min="0" style="text-align:center;"><br><br>
+
+    <label>Letzte Trophäe aus diesem Spiel (Jahr):</label><br>
+    <input type="number" id="year" min="2000" max="2025" value="2023" style="text-align:center;"><br><br>
+
+    <input type="button" value="Berechnen" id="calc">
+    <input type="button" value="Zurücksetzen" id="resetBtn">
+</form>
+
+<div id="message"></div>
+
+<div id="results">
+    <h2>Auswertung</h2>
+    <table>
+        <tr><td>Bronze</td><td><span id="bronzePts"></span></td></tr>
+        <tr><td>Silber</td><td><span id="silverPts"></span></td></tr>
+        <tr><td>Gold</td><td><span id="goldPts"></span></td></tr>
+        <tr><td>Platin</td><td><span id="platinumPts"></span></td></tr>
+        <tr><td><b>Gesamtpunkte (ohne Bonus)</b></td><td><span id="total"></span></td></tr>
+        <tr><td>Bonusfaktor</td><td><span id="bonusFactor"></span></td></tr>
+        <tr><td><b>Endpunktzahl (mit Bonus)</b></td><td><span id="finalPts"></span></td></tr>
+    </table>
+</div>
+
+<script>
+document.getElementById("calc").addEventListener("click", calcPoints);
+document.getElementById("resetBtn").addEventListener("click", resetForm);
+
+function resetForm() {
+    const form = document.getElementById("trophyForm");
+    form.reset();
+    document.getElementById("year").value = 2023;
+    document.getElementById("results").style.display = "none"; 
+    document.getElementById("message").textContent = "";
+}
+
+function calcPoints() {
+    const b = parseInt(document.getElementById("bronze").value) || 0;
+    const s = parseInt(document.getElementById("silver").value) || 0;
+    const g = parseInt(document.getElementById("gold").value) || 0;
+    const p = parseInt(document.getElementById("platinum").value) || 0;
+    const year = parseInt(document.getElementById("year").value);
+    const messageBox = document.getElementById("message");
+
+    // Jahr prüfen
+    if (year >= 2024) {
+        messageBox.textContent = "❌ Dieses Spiel ist nicht gültig (zu neu).";
+        document.getElementById("results").style.display = "none";
+        return;
+    } else {
+        messageBox.textContent = "";
+    }
+
+    const bronzePts = b * 15;
+    const silverPts = s * 30;
+    const goldPts = g * 90;
+    const platinumPts = p * 300;
+    const total = bronzePts + silverPts + goldPts + platinumPts;
+
+    document.getElementById("bronzePts").textContent = bronzePts;
+    document.getElementById("silverPts").textContent = silverPts;
+    document.getElementById("goldPts").textContent = goldPts;
+    document.getElementById("platinumPts").textContent = platinumPts;
+    document.getElementById("total").textContent = total;
+
+    // Bonusberechnung
+    let bonusFactor = 1.0;
+    if (year && year < 2023) {
+        const diff = 2023 - year;
+        const steps = Math.floor(diff / 2);
+        bonusFactor += steps * 0.1;
+    }
+
+    document.getElementById("bonusFactor").textContent = bonusFactor.toFixed(1) + "x";
+    document.getElementById("finalPts").textContent = (total * bonusFactor).toFixed(2);
+
+    // Ergebnisse anzeigen
+    document.getElementById("results").style.display = "block";
+}
+
+// Countdown
+const countDownDate = new Date("Nov 30, 2025 23:59:59").getTime();
+const timer = setInterval(() => {
+    const now = new Date().getTime();
+    const distance = countDownDate - now;
+
+    if (distance < 0) {
+        clearInterval(timer);
+        document.getElementById("counter").textContent = "Event beendet!";
+        return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    document.getElementById("counter").textContent =
+        `${days}d ${hours}h ${minutes}m ${seconds}s`;
+}, 1000);
+</script>
+
+</body>
+</html>
