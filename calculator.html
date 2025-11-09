@@ -45,6 +45,48 @@
         font-weight: bold;
         margin-top: 10px;
     }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .form-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 6px 0;
+        flex-wrap: wrap;
+    }
+
+    .form-row label {
+        margin-right: 10px;
+        min-width: 60px;
+        text-align: right;
+    }
+
+    .form-row input {
+        text-align: center;
+        width: 80px;
+    }
+
+    @media (max-width: 480px) {
+        .form-row {
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-row label {
+            text-align: center;
+            margin-right: 0;
+            margin-bottom: 4px;
+        }
+    }
+
+    #buttons {
+        margin-top: 10px;
+    }
+
 </style>
 </head>
 <body>
@@ -54,26 +96,34 @@
 
 <div style="color:orangered;">Counter: <span id="counter">Event beendet!</span></div>
 
-<h2>Eingabe</h2>
+<h2>Eingabe Trophäen</h2>
 
 <form id="trophyForm" onsubmit="return false;">
-    <label>Bronze-Trophäen:</label><br>
-    <input type="number" id="bronze" min="0" style="text-align:center;" value="0" size="5"><br><br>
+    <div class="form-row">
+        <label for="bronze">Bronze</label>
+        <input type="number" id="bronze" min="0" value="0">
+    </div>
+    <div class="form-row">
+        <label for="silver">Silber</label>
+        <input type="number" id="silver" min="0" value="0">
+    </div>
+    <div class="form-row">
+        <label for="gold">Gold</label>
+        <input type="number" id="gold" min="0" value="0">
+    </div>
+    <div class="form-row">
+        <label for="platinum">Platin</label>
+        <input type="number" id="platinum" min="0" value="0">
+    </div>
+    <div class="form-row">
+        <label for="year">Letzte Trophäe (Jahr)</label>
+        <input type="number" id="year" min="2009" max="2025" value="2023">
+    </div>
 
-    <label>Silber-Trophäen:</label><br>
-    <input type="number" id="silver" min="0" style="text-align:center;" value="0" size="5"><br><br>
-
-    <label>Gold-Trophäen:</label><br>
-    <input type="number" id="gold" min="0" style="text-align:center;" value="0" size="5"><br><br>
-
-    <label>Platin-Trophäen:</label><br>
-    <input type="number" id="platinum" min="0" style="text-align:center;" value="0" size="5"><br><br>
-
-    <label>Letzte Trophäe aus diesem Spiel (Jahr):</label><br>
-    <input type="number" id="year" min="2000" max="2025" value="2023" style="text-align:center;"><br><br>
-
-    <input type="button" value="Berechnen" id="calc">
-    <input type="button" value="Zurücksetzen" id="resetBtn">
+    <div id="buttons">
+        <input type="button" value="Berechnen" id="calc">
+        <input type="button" value="Zurücksetzen" id="resetBtn">
+    </div>
 </form>
 
 <div id="message"></div>
@@ -112,7 +162,6 @@ function calcPoints() {
     const year = parseInt(document.getElementById("year").value);
     const messageBox = document.getElementById("message");
 
-    // Jahr prüfen
     if (year >= 2024) {
         messageBox.textContent = "❌ Dieses Spiel ist nicht gültig (zu neu).";
         document.getElementById("results").style.display = "none";
@@ -133,7 +182,6 @@ function calcPoints() {
     document.getElementById("platinumPts").textContent = platinumPts;
     document.getElementById("total").textContent = total;
 
-    // Bonusberechnung
     let bonusFactor = 1.0;
     if (year && year < 2023) {
         const diff = 2023 - year;
@@ -144,13 +192,11 @@ function calcPoints() {
     document.getElementById("bonusFactor").textContent = bonusFactor.toFixed(1) + "x";
     document.getElementById("finalPts").textContent = (total * bonusFactor).toFixed(2);
 
-    // Ergebnisse anzeigen
     document.getElementById("results").style.display = "block";
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     document.body.style.zoom = "100%";
 }
 
-// Countdown
 const countDownDate = new Date("Nov 30, 2025 23:59:59").getTime();
 const timer = setInterval(() => {
     const now = new Date().getTime();
